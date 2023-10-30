@@ -7,12 +7,14 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
+  const [loadingInitial, setLoadingInitial] = useState(true);
   const [signInSuccess, setSignInSuccess] = useState(false);
 
   const getCurrentUser = async () => {
     try {
       const result = await apiInstance.get("/users/profile");
       setUser(result.data);
+      setLoadingInitial(false);
     } catch (error) {
       console.log(error);
     }
@@ -36,6 +38,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    const refresh_token = localStorage.getItem("refresh_token");
+
+    if (!access_token || !refresh_token) {
+      localStorage.clear();
+      setLoadingInitial(false);
+    } else {
+      setSignInSuccess(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (signInSuccess) {
       getCurrentUser();
     }
@@ -52,7 +66,9 @@ export const AuthProvider = ({ children }) => {
   );
 
   return (
-    <AuthContext.Provider value={memoedValue}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={memoedValue}>
+      {!loadingInitial && children}
+    </AuthContext.Provider>
   );
 };
 

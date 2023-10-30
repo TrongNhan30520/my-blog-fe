@@ -23,7 +23,6 @@ function ProfileSettings() {
     console.log(updateType, value);
   };
 
-  console.log(user);
   return (
     <>
       <TitleCard title="Profile Settings" topMargin="mt-2">

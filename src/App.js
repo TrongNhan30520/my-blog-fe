@@ -10,6 +10,7 @@ import {
 import { themeChange } from "theme-change";
 import initializeApp from "./app/init";
 import useAuth from "./hooks/useAuth";
+import ProtectedAuth from "./routes/ProtectedAuth";
 
 // Importing pages
 const Layout = lazy(() => import("./containers/Layout"));
@@ -33,11 +34,7 @@ function App() {
       <Router>
         <Routes>
           {/* Public routes */}
-          <Route
-            element={
-              !user ? <Outlet /> : <Navigate to="/app/dashboard" replace />
-            }
-          >
+          <Route element={<ProtectedAuth routeProtected={false} />}>
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<Register />} />
@@ -45,7 +42,7 @@ function App() {
           </Route>
 
           {/* Private routes */}
-          <Route element={user ? <Outlet /> : <Navigate to="/login" replace />}>
+          <Route element={<ProtectedAuth />}>
             <Route path="/app/*" element={<Layout />} />
           </Route>
 

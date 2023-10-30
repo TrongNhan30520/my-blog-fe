@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import LandingIntro from "./LandingIntro";
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
-import apiInstance from "../../apis/apiInstance";
 import {
   NotificationContainer,
   NotificationManager,

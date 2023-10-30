@@ -1,61 +1,79 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 import LandingIntro from "./LandingIntro";
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
+import apiInstance from "../../apis/apiInstance";
 
 function Register() {
   const INITIAL_REGISTER_OBJ = {
-    name: "",
-    password: "",
-    emailId: "",
-  };
-
-  const INITIAL_REGISTER_ERROR_OBJ = {
-    name: "",
+    first_name: "",
+    last_name: "",
     password: "",
     email: "",
   };
 
+  const INITIAL_REGISTER_ERROR_OBJ = {
+    first_name: "",
+    last_name: "",
+    password: "",
+    email: "",
+  };
+
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(INITIAL_REGISTER_ERROR_OBJ);
   const [registerObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
     setErrorMessage(INITIAL_REGISTER_ERROR_OBJ);
 
-    if (registerObj.name.trim() === "")
+    if (registerObj.first_name.trim() === "") {
       return setErrorMessage({
         ...errorMessage,
-        name: "Name is required! (use any value)",
+        first_name: "First Name is required!",
       });
-    if (registerObj.emailId.trim() === "")
+    }
+    if (registerObj.last_name.trim() === "")
       return setErrorMessage({
         ...errorMessage,
-        email: "Email Id is required! (use any value)",
+        last_name: "Last Name is required!",
       });
+    if (registerObj.email.trim() === "")
+      return setErrorMessage({ ...errorMessage, email: "Email is required!" });
     else {
       let valid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-        registerObj.emailId
+        registerObj.email
       );
       if (!valid)
         return setErrorMessage({
           ...errorMessage,
-          email: "Email Id is not valid!",
+          email: "Email is not valid!",
         });
     }
     if (registerObj.password.trim() === "")
       return setErrorMessage({
         ...errorMessage,
-        password: "Password is required! (use any value)",
+        password: "Password is required!",
       });
     else {
       setLoading(true);
       // Call API to check user credentials and save token in localstorage
-      localStorage.setItem("access_token", "DumyTokenHere");
-      setLoading(false);
-      window.location.href = "/app/dashboard";
+      try {
+        await apiInstance.post("auth/register", registerObj);
+        setLoading(false);
+        NotificationManager.success("Registered successfully", "Success", 3000);
+        navigate("/login");
+      } catch (error) {
+        setLoading(false);
+        NotificationManager.error(`${error.response.data.message}`, "Error");
+      }
     }
   };
 
@@ -67,6 +85,7 @@ function Register() {
   return (
     <div className="min-h-screen bg-base-200 flex items-center">
       <div className="card mx-auto w-full max-w-5xl  shadow-xl">
+        <NotificationContainer />
         <div className="grid  md:grid-cols-2 grid-cols-1  bg-base-100 rounded-xl">
           <div className="">
             <LandingIntro />
@@ -78,23 +97,36 @@ function Register() {
             <form onSubmit={(e) => submitForm(e)}>
               <div className="mb-4">
                 <InputText
-                  defaultValue={registerObj.name}
-                  updateType="name"
+                  defaultValue={registerObj.first_name}
+                  updateType="first_name"
                   containerStyle="mt-4"
-                  labelTitle="Name"
+                  labelTitle="First Name"
                   placeholder=""
                   updateFormValue={updateFormValue}
                 />
 
                 <ErrorText styleClass="pt-2 h-2 ">
-                  {errorMessage.name}
+                  {errorMessage.first_name}
                 </ErrorText>
 
                 <InputText
-                  defaultValue={registerObj.emailId}
-                  updateType="emailId"
+                  defaultValue={registerObj.last_name}
+                  updateType="last_name"
                   containerStyle="mt-4"
-                  labelTitle="Email Id"
+                  labelTitle="Last Name"
+                  placeholder=""
+                  updateFormValue={updateFormValue}
+                />
+
+                <ErrorText styleClass="pt-2 h-2 ">
+                  {errorMessage.last_name}
+                </ErrorText>
+
+                <InputText
+                  defaultValue={registerObj.email}
+                  updateType="email"
+                  containerStyle="mt-4"
+                  labelTitle="Email"
                   placeholder="abcd@gmail.com"
                   updateFormValue={updateFormValue}
                 />
