@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  NotificationContainer,
-  NotificationManager,
-} from "react-notifications";
+import { NotificationManager } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import LandingIntro from "./LandingIntro";
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
-import apiInstance from "../../apis/apiInstance";
+import useAuth from "../../hooks/useAuth";
 
 function Register() {
   const INITIAL_REGISTER_OBJ = {
@@ -25,6 +22,7 @@ function Register() {
     email: "",
   };
 
+  const { register } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(INITIAL_REGISTER_ERROR_OBJ);
@@ -65,15 +63,15 @@ function Register() {
     else {
       setLoading(true);
       // Call API to check user credentials and save token in localstorage
-      try {
-        await apiInstance.post("auth/register", registerObj);
-        setLoading(false);
-        NotificationManager.success("Registered successfully", "Success", 3000);
-        navigate("/login");
-      } catch (error) {
-        setLoading(false);
-        NotificationManager.error(`${error.response.data.message}`, "Error");
-      }
+      const data = register(
+        registerObj.first_name,
+        registerObj.last_name,
+        registerObj.email,
+        registerObj.password
+      );
+      setLoading(false);
+      NotificationManager.success("Registered successfully", "Success", 1000);
+      navigate("/login");
     }
   };
 
@@ -85,7 +83,6 @@ function Register() {
   return (
     <div className="min-h-screen bg-base-200 flex items-center">
       <div className="card mx-auto w-full max-w-5xl  shadow-xl">
-        <NotificationContainer />
         <div className="grid  md:grid-cols-2 grid-cols-1  bg-base-100 rounded-xl">
           <div className="">
             <LandingIntro />

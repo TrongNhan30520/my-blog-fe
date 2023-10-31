@@ -1,7 +1,8 @@
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
+import PaginationBar from "../../components/PaginationBar";
 import { openModal } from "../common/modalSlice";
 import { getUsersContent } from "./usersSlice";
 import {
@@ -36,13 +37,25 @@ const TopSideButtons = () => {
 };
 
 function Users() {
-  const { contents: userContent } = useSelector((state) => state.users);
-  const users = userContent[STORE_USERS_TYPE.GET_USERS_DATA];
   const dispatch = useDispatch();
+  const { contents: userContent, pages } = useSelector((state) => state.users);
+  const users = userContent[STORE_USERS_TYPE.GET_USERS_DATA];
+  const userCreated = userContent[STORE_USERS_TYPE.CREATE_USER];
+  const { currentPage, lastPage, nextPage, prePage, total } = pages;
+
+  const [page, setPage] = useState(1);
+  const [item_per_page, setItem_per_page] = useState(7);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    dispatch(getUsersContent());
-  }, []);
+    dispatch(
+      getUsersContent({
+        page: page,
+        item_per_page: item_per_page,
+        search: search,
+      })
+    );
+  }, [page, userCreated]);
 
   const getDummyStatus = (index) => {
     if (index % 5 === 0) return <div className="badge">Client</div>;
@@ -85,7 +98,7 @@ function Users() {
                 <th>Email Id</th>
                 <th>Created At</th>
                 <th>Status</th>
-                <th></th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -123,6 +136,17 @@ function Users() {
               })}
             </tbody>
           </table>
+        </div>
+        <div className="w-full pt-2 flex justify-center">
+          <PaginationBar
+            lastPage={lastPage}
+            currentPage={currentPage}
+            nextPage={nextPage}
+            prePage={prePage}
+            total={total}
+            setPage={setPage}
+            className="justify-between w-[400px]"
+          />
         </div>
       </TitleCard>
     </>

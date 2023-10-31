@@ -7,6 +7,7 @@ import store from "./app/store";
 import { Provider } from "react-redux";
 import SuspenseContent from "./containers/SuspenseContent";
 import { AuthProvider } from "./context/AuthProvider";
+import { NotificationContainer } from "react-notifications";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -14,6 +15,7 @@ root.render(
   <Suspense fallback={<SuspenseContent />}>
     <Provider store={store}>
       <AuthProvider>
+        <NotificationContainer />
         <App />
       </AuthProvider>
     </Provider>

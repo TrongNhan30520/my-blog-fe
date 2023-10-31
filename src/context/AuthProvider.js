@@ -31,9 +31,29 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("refresh_token", data.refresh_token);
       setSignInSuccess(true);
       setLoading(false);
+      return;
     } catch (error) {
       setLoading(false);
       setError(error);
+      return error;
+    }
+  };
+
+  const register = async (first_name, last_name, email, password) => {
+    try {
+      setLoading(true);
+      await apiInstance.post("auth/register", {
+        first_name,
+        last_name,
+        email,
+        password,
+      });
+      setLoading(false);
+      return;
+    } catch (error) {
+      setLoading(false);
+      setError(error);
+      return error;
     }
   };
 
@@ -59,6 +79,7 @@ export const AuthProvider = ({ children }) => {
     () => ({
       user,
       signIn,
+      register,
       loading,
       error,
     }),

@@ -1,11 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiInstance from "../../apis/apiInstance";
+import apiInstanceNotLoading from "../../apis/apiInstanceNotLoading";
 import { STORE_USERS_TYPE } from "../../utils/globalConstantUtil";
 
 export const getUsersContent = createAsyncThunk(
   STORE_USERS_TYPE.GET_USERS_DATA,
-  async () => {
-    const response = await apiInstance.get("users");
+  async ({ page, item_per_page, search }) => {
+    const response = await apiInstanceNotLoading.get(
+      `users?page=${page}&item_per_page=${item_per_page}&search=${search}`
+    );
     return response.data;
   }
 );
@@ -31,6 +34,7 @@ export const usersSlice = createSlice({
   initialState: {
     isLoading: false,
     contents: {},
+    pages: {},
   },
   reducers: {
     // addNewUser: (state, action) => {
@@ -48,7 +52,9 @@ export const usersSlice = createSlice({
       state.isLoading = true;
     },
     [getUsersContent.fulfilled]: (state, action) => {
-      state.contents[STORE_USERS_TYPE.GET_USERS_DATA] = action.payload.data;
+      const { data, ...pages } = action.payload;
+      state.contents[STORE_USERS_TYPE.GET_USERS_DATA] = data;
+      state.pages = pages;
       state.isLoading = false;
     },
     [getUsersContent.rejected]: (state) => {
@@ -63,6 +69,7 @@ export const usersSlice = createSlice({
         action.payload,
         ...state.contents[STORE_USERS_TYPE.GET_USERS_DATA],
       ];
+      state.contents[STORE_USERS_TYPE.CREATE_USER] = action.payload;
       state.isLoading = false;
     },
     [createNewUser.rejected]: (state) => {

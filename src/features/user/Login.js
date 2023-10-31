@@ -3,10 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LandingIntro from "./LandingIntro";
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
-import {
-  NotificationContainer,
-  NotificationManager,
-} from "react-notifications";
+import { NotificationManager } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import useAuth from "../../hooks/useAuth";
 
@@ -21,7 +18,7 @@ function Login() {
     email: "",
   };
 
-  const { signIn, loading } = useAuth();
+  const { signIn, error, loading } = useAuth();
 
   const navigate = useNavigate();
 
@@ -54,12 +51,15 @@ function Login() {
       });
     else {
       // Call API to check user credentials and save token in localstorage
-
-      try {
-        await signIn(loginObj.email, loginObj.password);
+      const data = await signIn(loginObj.email, loginObj.password);
+      if (data) {
+        NotificationManager.error(
+          `${error?.response?.data?.message}`,
+          "Error",
+          1000
+        );
+      } else {
         navigate("/app/dashboard");
-      } catch (error) {
-        NotificationManager.error(`${error.response.data.message}`, "Error");
       }
     }
   };
@@ -73,7 +73,6 @@ function Login() {
     <div className="min-h-screen bg-base-200 flex items-center">
       <div className="card mx-auto w-full max-w-5xl  shadow-xl">
         <div className="grid  md:grid-cols-2 grid-cols-1  bg-base-100 rounded-xl">
-          <NotificationContainer />
           <div className="">
             <LandingIntro />
           </div>
