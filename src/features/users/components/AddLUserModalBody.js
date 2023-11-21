@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import InputText from "../../../components/Input/InputText";
 import ErrorText from "../../../components/Typography/ErrorText";
-import { showNotification } from "../../common/headerSlice";
-import { addNewUser } from "../usersSlice";
 
 import { createNewUser } from "../usersSlice";
 
@@ -26,7 +24,7 @@ function AddUserModalBody({ closeModal }) {
   const [errorMessage, setErrorMessage] = useState(INITIAL_USER_ERROR_OBJ);
   const [userObj, setUserObj] = useState(INITIAL_USER_OBJ);
 
-  const saveNewLead = () => {
+  const saveNewLead = async () => {
     if (userObj.first_name.trim() === "") {
       return setErrorMessage({
         ...errorMessage,

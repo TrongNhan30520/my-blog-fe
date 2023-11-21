@@ -28,9 +28,9 @@ const PaginationBar = ({
           stroke="currentColor"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
             d="M15 19l-7-7 7-7"
           />
         </svg>
@@ -62,14 +62,16 @@ const PaginationBar = ({
         <span className="flex px-4 py-2 rounded bg-indigo-500  text-white">
           {currentPage}
         </span>
-        <span
-          onClick={() => {
-            setPage(nextPage);
-          }}
-          className={`flex px-4 py-2 rounded hover:bg-gray-100 `}
-        >
-          {nextPage}
-        </span>
+        {nextPage && (
+          <span
+            onClick={() => {
+              setPage(nextPage);
+            }}
+            className={`flex px-4 py-2 rounded hover:bg-gray-100 `}
+          >
+            {nextPage}
+          </span>
+        )}
 
         {currentPage < lastPage - 1 && (
           <span className="flex">
@@ -87,7 +89,7 @@ const PaginationBar = ({
       </span>
 
       <span
-        onClick={() => {
+        onClick={(e) => {
           if (currentPage < lastPage) setPage(currentPage + 1);
         }}
         className="p-2 ml-4 rounded hover:bg-gray-100"
@@ -100,9 +102,9 @@ const PaginationBar = ({
           stroke="currentColor"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
             d="M9 5l7 7-7 7"
           />
         </svg>

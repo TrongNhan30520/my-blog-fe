@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { NotificationManager } from "react-notifications";
-import "react-notifications/lib/notifications.css";
 import LandingIntro from "./LandingIntro";
 import ErrorText from "../../components/Typography/ErrorText";
 import InputText from "../../components/Input/InputText";
 import useAuth from "../../hooks/useAuth";
+import { NotificationManager } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 function Register() {
   const INITIAL_REGISTER_OBJ = {
@@ -21,10 +21,9 @@ function Register() {
     password: "",
     email: "",
   };
-
-  const { register } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+
+  const { register, loading } = useAuth();
   const [errorMessage, setErrorMessage] = useState(INITIAL_REGISTER_ERROR_OBJ);
   const [registerObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
 
@@ -61,17 +60,17 @@ function Register() {
         password: "Password is required!",
       });
     else {
-      setLoading(true);
       // Call API to check user credentials and save token in localstorage
-      const data = register(
+      const check = await register(
         registerObj.first_name,
         registerObj.last_name,
         registerObj.email,
         registerObj.password
       );
-      setLoading(false);
-      NotificationManager.success("Registered successfully", "Success", 1000);
-      navigate("/login");
+      if (check) {
+        NotificationManager.success("Registered successfully", "Success", 1000);
+        navigate("/login");
+      }
     }
   };
 

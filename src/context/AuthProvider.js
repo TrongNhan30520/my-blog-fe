@@ -1,5 +1,7 @@
 import React, { useState, useEffect, createContext, useMemo } from "react";
 import apiInstance from "../apis/apiInstance";
+import { NotificationManager } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 const AuthContext = createContext({});
 
@@ -9,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState();
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [signInSuccess, setSignInSuccess] = useState(false);
+  const [updateProfile, setUpdateProfile] = useState(false);
 
   const getCurrentUser = async () => {
     try {
@@ -49,11 +52,11 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       setLoading(false);
-      return;
+      return true;
     } catch (error) {
       setLoading(false);
-      setError(error);
-      return error;
+      NotificationManager.error(error?.response?.data?.message, "Error", 1000);
+      return false;
     }
   };
 
@@ -70,15 +73,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (signInSuccess) {
+    if (signInSuccess || updateProfile) {
       getCurrentUser();
+      if (updateProfile) setUpdateProfile(false);
     }
-  }, [signInSuccess]);
+  }, [signInSuccess, updateProfile]);
 
   const memoedValue = useMemo(
     () => ({
       user,
       signIn,
+      setUpdateProfile,
       register,
       loading,
       error,

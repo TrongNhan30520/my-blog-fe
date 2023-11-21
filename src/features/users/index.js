@@ -5,6 +5,8 @@ import TitleCard from "../../components/Cards/TitleCard";
 import PaginationBar from "../../components/PaginationBar";
 import { openModal } from "../common/modalSlice";
 import { getUsersContent } from "./usersSlice";
+import { showNotification } from "../common/headerSlice";
+import usePrevious from "../../hooks/usePrevious";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
@@ -38,24 +40,25 @@ const TopSideButtons = () => {
 
 function Users() {
   const dispatch = useDispatch();
-  const { contents: userContent, pages } = useSelector((state) => state.users);
+  const {
+    contents: userContent,
+    pages,
+    errors,
+    isLoading,
+  } = useSelector((state) => state.users);
+
   const users = userContent[STORE_USERS_TYPE.GET_USERS_DATA];
+
+  const preCreateUser = usePrevious(isLoading[STORE_USERS_TYPE.CREATE_USER]);
+  const preDeleteUser = usePrevious(isLoading[STORE_USERS_TYPE.DELETE_USER]);
+
   const userCreated = userContent[STORE_USERS_TYPE.CREATE_USER];
+  const userDelete = userContent[STORE_USERS_TYPE.DELETE_USER];
   const { currentPage, lastPage, nextPage, prePage, total } = pages;
 
   const [page, setPage] = useState(1);
   const [item_per_page, setItem_per_page] = useState(7);
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    dispatch(
-      getUsersContent({
-        page: page,
-        item_per_page: item_per_page,
-        search: search,
-      })
-    );
-  }, [page, userCreated]);
 
   const getDummyStatus = (index) => {
     if (index % 5 === 0) return <div className="badge">Client</div>;
@@ -82,6 +85,74 @@ function Users() {
     );
   };
 
+  useEffect(() => {
+    dispatch(
+      getUsersContent({
+        page: page,
+        item_per_page: item_per_page,
+        search: search,
+      })
+    );
+  }, [page]);
+
+  useEffect(() => {
+    if (preCreateUser && !isLoading[STORE_USERS_TYPE.CREATE_USER]) {
+      if (errors[STORE_USERS_TYPE.CREATE_USER]) {
+        dispatch(
+          showNotification({
+            message: errors[STORE_USERS_TYPE.CREATE_USER].message,
+            status: 0,
+            time: 1000,
+          })
+        );
+      } else {
+        dispatch(
+          showNotification({
+            message: "Added new user successfully!",
+            status: 1,
+            time: 1000,
+          })
+        );
+        dispatch(
+          getUsersContent({
+            page: page,
+            item_per_page: item_per_page,
+            search: search,
+          })
+        );
+      }
+    }
+  }, [dispatch, errors, isLoading, preCreateUser]);
+
+  useEffect(() => {
+    if (preDeleteUser && !isLoading[STORE_USERS_TYPE.DELETE_USER]) {
+      if (errors[STORE_USERS_TYPE.DELETE_USER]) {
+        dispatch(
+          showNotification({
+            message: errors[STORE_USERS_TYPE.DELETE_USER].message,
+            status: 0,
+            time: 1000,
+          })
+        );
+      } else {
+        dispatch(
+          showNotification({
+            message: "Deleted user successfully!",
+            status: 1,
+            time: 1000,
+          })
+        );
+        dispatch(
+          getUsersContent({
+            page: page,
+            item_per_page: item_per_page,
+            search: search,
+          })
+        );
+      }
+    }
+  }, [dispatch, errors, isLoading, preDeleteUser]);
+
   return (
     <>
       <TitleCard
@@ -90,7 +161,7 @@ function Users() {
         TopSideButtons={<TopSideButtons />}
       >
         {/* Leads List in table format loaded from slice after api call */}
-        <div className="overflow-x-auto w-full">
+        <div className="overflow-x-auto w-full h-[630px]">
           <table className="table w-full">
             <thead>
               <tr>

@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
 import { CONFIRMATION_MODAL_CLOSE_TYPES } from "../../../utils/globalConstantUtil";
 import { deleteUser } from "../../users/usersSlice";
-import { showNotification } from "../headerSlice";
 
 function ConfirmationModalBody({ extraObject, closeModal }) {
   const dispatch = useDispatch();
@@ -12,7 +11,6 @@ function ConfirmationModalBody({ extraObject, closeModal }) {
     if (type === CONFIRMATION_MODAL_CLOSE_TYPES.USER_DELETE) {
       // positive response, call api or dispatch redux function
       dispatch(deleteUser(index));
-      dispatch(showNotification({ message: "User Deleted!", status: 1 }));
     }
     closeModal();
   };
