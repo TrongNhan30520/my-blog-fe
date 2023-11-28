@@ -7975,6 +7975,11 @@ react-notifications@^1.7.4:
     prop-types "^15.5.10"
     react-transition-group "^4.4.1"
 
+react-otp-input@2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/react-otp-input/-/react-otp-input-2.3.1.tgz#85d85c01e5d51b0a43c3dc03927292a54d15ed98"
+  integrity sha512-ka14XemxkVh+nl1ykD9HutTyx5ailf4smOZ9gqciQ7GODbepWcjfh1pqsoEB2Mib/sFf1I6OjaPnct5d27+SFA==
+
 react-redux@^8.0.5:
   version "8.1.3"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-8.1.3.tgz#4fdc0462d0acb59af29a13c27ffef6f49ab4df46"

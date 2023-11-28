@@ -15,6 +15,7 @@ import ProtectedAuth from "./routes/ProtectedAuth";
 // Importing pages
 const Layout = lazy(() => import("./containers/Layout"));
 const Login = lazy(() => import("./pages/Login"));
+const VerifyOtp = lazy(() => import("./pages/VerifyOtp"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Register = lazy(() => import("./pages/Register"));
 const Documentation = lazy(() => import("./pages/Documentation"));
@@ -38,6 +39,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/documentation" element={<Documentation />} />
           </Route>
 

@@ -52,12 +52,20 @@ function Login() {
     else {
       // Call API to check user credentials and save token in localstorage
       const data = await signIn(loginObj.email, loginObj.password);
+
       if (data) {
         NotificationManager.error(
-          `${error?.response?.data?.message}`,
+          `${data?.response?.data?.message}`,
           "Error",
-          1000
+          2000
         );
+        if (data?.response?.data?.statusCode === 400) {
+          navigate("/verify-otp", {
+            state: {
+              email: loginObj.email,
+            },
+          });
+        }
       } else {
         navigate("/app/dashboard");
       }
